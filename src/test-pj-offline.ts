@@ -8,15 +8,7 @@ import { Document } from './types';
 const DEFAULT_FIXTURE = 'test/fixtures/Prueba_Jurisprudencia_Nacional_Sistematizada.html';
 const PJ_BASE = sites.PJ.baseUrl;
 
-/**
- * Valida offline (sin VPN) la extracción de los resultados del Poder Judicial
- * contra un HTML real guardado del navegador, incluida la forma de las URLs de
- * descarga (ServletDescarga?uuid=...). No descarga nada. Uso:
- *
- *   npm run test:pj:offline
- *   # o con otra ruta de fixture:
- *   npx ts-node src/test-pj-offline.ts "ruta/al/resultado.xhtml.html"
- */
+// Para testear: npm run test:pj:offline
 function validatePdfUrls(documents: Document[]): string[] {
   const issues: string[] = [];
   const seenUuids = new Map<string, number>();
@@ -64,29 +56,29 @@ async function main() {
   }
 
   const raw = fs.readFileSync(abs, 'utf-8');
-  console.log(`📄 Fixture cargado: ${abs} (${raw.length} bytes)`);
+  console.log(`Fixture cargado: ${abs} (${raw.length} bytes)`);
 
   const $ = cheerio.load(raw);
   const { documents, rowCount } = extractPjDocuments($, PJ_BASE);
 
-  console.log(`\n📊 Filas encontradas: ${rowCount}`);
-  console.log(`📋 Documentos extraídos: ${documents.length}\n`);
+  console.log(`\n Filas encontradas: ${rowCount}`);
+  console.log(`Documentos extraídos: ${documents.length}\n`);
 
   documents.forEach((d, i) => {
     console.log(`#${i + 1}`);
-    console.log(`   Expediente : ${d.id}`);
-    console.log(`   Recurso    : ${d.title}`);
-    console.log(`   Sala       : ${d.court}`);
-    console.log(`   Fecha      : ${d.date}`);
-    console.log(`   Pretensión : ${d.category}`);
-    console.log(`   Sumilla    : ${d.summary.slice(0, 120)}${d.summary.length > 120 ? '...' : ''}`);
-    console.log(`   PDF        : ${d.pdfUrl}`);
+    console.log(` Expediente : ${d.id}`);
+    console.log(` Recurso    : ${d.title}`);
+    console.log(` Sala       : ${d.court}`);
+    console.log(` Fecha      : ${d.date}`);
+    console.log(` Pretensión : ${d.category}`);
+    console.log(` Sumilla    : ${d.summary.slice(0, 120)}${d.summary.length > 120 ? '...' : ''}`);
+    console.log(` PDF        : ${d.pdfUrl}`);
     console.log('');
   });
 
   const issues: string[] = [];
   if (rowCount === 0) issues.push('No se encontraron filas (selector div.rf-p[id*=":repeat:"] no coincide)');
-  if (rowCount !== 10) issues.push(`Se esperaban 10 filas (héroe de prueba), se obtuvieron ${rowCount}`);
+  if (rowCount !== 10) issues.push(`Se esperaban 10 filas, se obtuvieron ${rowCount}`);
   if (documents.length !== rowCount) issues.push('Cantidad de documentos distinta a las filas');
 
   const sinPdf = documents.filter(d => !d.pdfUrl).length;
@@ -103,10 +95,10 @@ async function main() {
     process.exit(1);
   }
 
-  console.log('✅ La extracción y las URLs de descarga son correctas en este HTML.');
+  console.log('La extracción y las URLs de descarga son correctas en este HTML.');
 }
 
 main().catch(e => {
-  console.error('❌ Error:', e);
+  console.error('Error:', e);
   process.exit(1);
 });
