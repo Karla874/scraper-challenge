@@ -2,7 +2,7 @@ import axios, { AxiosError } from 'axios';
 import * as https from 'https';
 
 async function testOEFA() {
-  console.log('🔍 Probando conexión a OEFA...');
+  console.log('Probando conexión OEFA...');
   
   try {
     const response = await axios.get(
@@ -20,32 +20,32 @@ async function testOEFA() {
       }
     );
     
-    console.log('✅ Conexión exitosa!');
-    console.log('📊 Status:', response.status);
-    console.log('📄 HTML length:', response.data.length);
-    console.log('🍪 Cookies:', response.headers['set-cookie']);
+    console.log('Conexión exitosa!');
+    console.log('Status:', response.status);
+    console.log('HTML length:', response.data.length);
+    console.log('Cookies:', response.headers['set-cookie']);
     
     // Verificar si contiene la estructura esperada
     if (response.data.includes('consultaTfa')) {
-      console.log('✅ Sitio OEFA accesible correctamente');
+      console.log('Sitio OEFA accesible');
     } else {
-      console.log('⚠️ El sitio responde pero la estructura es diferente');
+      console.log('El sitio responde pero la estructura es diferente');
     }
     
   } catch (error) {
-    // ✅ Manejo correcto de error de tipo 'unknown'
+    // Manejo correcto de error unknown.
     if (axios.isAxiosError(error)) {
       const axiosError = error as AxiosError;
-      console.error('❌ Error de Axios:');
-      console.error('   Status:', axiosError.response?.status);
-      console.error('   Mensaje:', axiosError.message);
+      console.error('Error de Axios:');
+      console.error('Status:', axiosError.response?.status);
+      console.error('Mensaje:', axiosError.message);
       if (axiosError.response?.data) {
         console.error('   Data:', axiosError.response.data);
       }
     } else if (error instanceof Error) {
-      console.error('❌ Error:', error.message);
+      console.error('Error:', error.message);
     } else {
-      console.error('❌ Error desconocido:', error);
+      console.error('Error desconocido:', error);
     }
   }
 }
