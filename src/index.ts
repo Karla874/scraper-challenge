@@ -10,11 +10,11 @@ async function main() {
     
     logger.info('Scraping completado exitosamente');
     logger.info(`Resumen:`);
-    logger.info(`   Documentos extraidos: ${results.documents.length}`);
-    logger.info(`   Sitio: ${results.site}`);
+    logger.info(` Documentos extraidos: ${results.documents.length}`);
+    logger.info(` Sitio: ${results.site}`);
     
   } catch (error) {
-    logger.error(`Error en la ejecucion principal: ${error}`);
+    logger.error(`Error en la ejecucin: ${error}`);
     process.exit(1);
   }
 }
