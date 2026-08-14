@@ -39,9 +39,7 @@ export class Scraper {
       const initialContentType = initial.headers?.['content-type'] as string | undefined;
       this.session.update(initial.data, initialContentType);
 
-      // OEFA: el GET inicial trae la tabla vacia, hay que disparar la busqueda (AJAX).
-      // PJ: el GET inicial (inicio.xhtml) tambien esta vacio, pero la busqueda
-      //     es un submit normal de formulario (fullpage), no AJAX.
+      // OEFA: el GET inicial trae la tabla vacia, hay hacer la busqueda (AJAX).
       let html: string;
       switch (this.config.jsf.searchMode) {
         case 'none':
@@ -56,7 +54,7 @@ export class Scraper {
           break;
       }
 
-      let pageNumber = 1; // 1-based, para logs y para la paginacion tipo PJ
+      let pageNumber = 1;
       while (pageNumber <= this.config.maxPages) {
         const docs = this.extractDocuments(html);
 
@@ -103,8 +101,8 @@ export class Scraper {
   }
 
   /**
-   * Envía el POST AJAX que dispara la búsqueda (equivalente a hacer click en
-   * "Buscar"). Solo aplica a sitios con jsf.searchMode === 'ajax' (caso OEFA).
+   * Se hace la búsqueda mencionada.
+   * "Buscar"). Solo para a sitios con jsf.searchMode === 'ajax' (OEFA).
    */
   private async submitSearch(): Promise<string> {
     const { jsf } = this.config;
@@ -139,12 +137,7 @@ export class Scraper {
     return JsfSession.toUsableHtml(response.data, contentType);
   }
 
-  /**
-   * Submit normal (no AJAX) del formulario completo para disparar la
-   * búsqueda, usando los campos exactos extraídos del botón real del sitio
-   * (caso PJ). A diferencia de submitSearch(), puede postear a una URL
-   * distinta de initialUrl (el <form action="..."> del sitio).
-   */
+  // Submit del formulario completo para la búsqueda, usando los campos extraídos del botón.
   private async submitFullPageSearch(): Promise<string> {
     const { jsf } = this.config;
     const body = this.session.buildBody(jsf.fullPageSearchFields ?? {});
@@ -163,22 +156,18 @@ export class Scraper {
     return JsfSession.toUsableHtml(response.data, contentType);
   }
 
-  /**
-   * Pide la siguiente página. Despacha según el mecanismo de paginación del
-   * sitio: AJAX estilo PrimeFaces (OEFA) o submit normal estilo RichFaces (PJ).
-   * currentPageNumber es 1-based (la página que se acaba de procesar).
-   */
+  // Pide la siguiente página.
   private async fetchNextPage(currentPageNumber: number): Promise<string | null> {
     if (this.config.jsf.pagination) {
       return this.fetchPjPage(currentPageNumber + 1);
     }
     if (this.config.jsf.paginationSourceField) {
-      return this.fetchOefaPage(currentPageNumber); // 0-based internamente
+      return this.fetchOefaPage(currentPageNumber);
     }
-    return null; // sitio sin paginación configurada -> nos quedamos en la 1ra pagina
+    return null; // Nos quedamos en la página 1.
   }
 
-  /** Paginación AJAX estilo PrimeFaces (OEFA). pageIndex es 0-based. */
+  // Paginación AJAX estilo PrimeFaces (OEFA).
   private async fetchOefaPage(pageIndex: number): Promise<string | null> {
     const { jsf } = this.config;
     if (!jsf.paginationSourceField) return null;
@@ -214,11 +203,7 @@ export class Scraper {
     }
   }
 
-  /**
-   * Paginación estilo RichFaces (PJ): submit normal del formulario completo,
-   * seteando el numero de pagina en el "spinner". Devuelve una pagina HTML
-   * completa (no partial-response). pageNumber es 1-based.
-   */
+  // Paginación (PJ): submit del formulario completo.
   private async fetchPjPage(pageNumber: number): Promise<string | null> {
     const { pagination } = this.config.jsf;
     if (!pagination) return null;
@@ -244,11 +229,8 @@ export class Scraper {
   }
 
   /**
-   * Cuando la primera página no trae resultados, guarda tanto la respuesta
-   * cruda del servidor como el HTML ya "desempaquetado" para poder
-   * diagnosticar sin tener que reproducir el request. Revisa estos archivos
-   * o compartilos para saber si el servidor devolvió un error, una sesión
-   * vencida, o simplemente una tabla vacía legítima.
+   * Cuando la primera página no trae resultados, guarda la respuesta del servidor
+     y el HTML ya "desempaquetado" para no volver a reproducir el request.
    */
   private async saveDebugSnapshot(processedHtml: string): Promise<void> {
     const debugDir = path.join(__dirname, '../../data/debug');
@@ -303,7 +285,7 @@ export class Scraper {
     }
   }
 
-  /** OEFA: filas de tabla PrimeFaces, descarga via postback mojarra.jsfcljs. */
+  // OEFA: filas de tabla PrimeFaces, descarga via postback mojarra.jsfcljs.
   private extractOefaDocuments($: CheerioAPI): Document[] {
     const documents: Document[] = [];
     const { rows, id, title, court, date, pdfLink } = this.selectors!;
@@ -351,10 +333,7 @@ export class Scraper {
     return documents;
   }
 
-  /**
-   * Descarga los PDFs de una página INMEDIATAMENTE después de extraerla,
-   * usando la sesión (ViewState) vigente de esa misma página.
-   */
+  // Descarga los PDFs de una página.
   private async downloadPdfsForPage(docs: Document[]): Promise<void> {
     const downloadable = docs.filter(d => d.pdfUrl || d.downloadAction);
     if (downloadable.length === 0) return;
