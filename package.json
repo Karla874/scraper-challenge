@@ -1,0 +1,30 @@
+{
+  "name": "scraper-challenge",
+  "version": "1.0.0",
+  "description": "Scraper para jurisprudencia del Poder Judicial de Perú",
+  "main": "dist/index.js",
+  "scripts": {
+    "clean": "node -e \"fs.rmSync('dist',{recursive:true,force:true})\"",
+    "prebuild": "npm run clean",
+    "build": "tsc",
+    "dev": "cross-env SCRAPER_SITE=OEFA nodemon --exec ts-node src/index.ts",
+    "dev:pj": "cross-env SCRAPER_SITE=PJ nodemon --exec ts-node src/index.ts",
+    "start": "cross-env SCRAPER_SITE=OEFA node dist/index.js",
+    "start:pj": "cross-env SCRAPER_SITE=PJ node dist/index.js",
+    "test:oefa": "cross-env SCRAPER_SITE=OEFA ts-node src/test-oefa.ts",
+    "test:pj": "cross-env SCRAPER_SITE=PJ ts-node src/test-pj.ts",
+    "test:pj:offline": "ts-node src/test-pj-offline.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.6",
+    "cross-env": "^7.0.3",
+    "nodemon": "^3.1.7",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "axios": "^1.7.7",
+    "cheerio": "^1.0.0",
+    "winston": "^3.17.0"
+  }
+}
