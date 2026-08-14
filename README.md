@@ -49,17 +49,3 @@ npm run test:pj:offline
 Se usa tanto para las páginas de listado como para cada descarga de PDF. Si un PDF
 sigue fallando después de todos los reintentos, el scraper continúa con el siguiente
 documento y registra el fallo en `data/output/<SITIO>-failed-*.json`.
-
-## Estructura del proyecto
-
-```
-src/
-  config/       # Configuración por sitio (URLs, selectores, campos JSF)
-  services/
-    httpClient.ts    # Cliente HTTP con manejo de cookies, headers y retry/backoff
-    jsfHelper.ts      # Utilidades para formularios JSF (ViewState, partial-response)
-    pdfDownloader.ts  # Descarga de PDFs con reintentos
-    scraper.ts        # Orquestación: búsqueda, paginación, extracción, descarga
-  types/        # Interfaces TypeScript
-  utils/        # Logger
-```
