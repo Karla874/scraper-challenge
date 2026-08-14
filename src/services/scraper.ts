@@ -102,7 +102,7 @@ export class Scraper {
 
   /**
    * Se hace la búsqueda mencionada.
-   * "Buscar"). Solo para a sitios con jsf.searchMode === 'ajax' (OEFA).
+   * Solo para a sitios con jsf.searchMode === 'ajax' (OEFA).
    */
   private async submitSearch(): Promise<string> {
     const { jsf } = this.config;
