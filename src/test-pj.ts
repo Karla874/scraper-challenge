@@ -2,8 +2,8 @@ import axios, { AxiosError } from 'axios';
 import * as https from 'https';
 
 /**
- * Prueba rápida de conectividad al sitio del Poder Judicial.
- * Requiere VPN a Perú activa; sin ella normalmente falla con 403 o timeout.
+ * Prueba de conectividad al sitio del Poder Judicial.
+ * Se necesita VPN.
  */
 async function testPJ() {
   console.log('🔍 Probando conexión a Poder Judicial (requiere VPN a Peru)...');
@@ -22,24 +22,24 @@ async function testPJ() {
       }
     );
 
-    console.log('✅ Conexión exitosa!');
-    console.log('📊 Status:', response.status);
-    console.log('📄 HTML length:', response.data.length);
-    console.log('🍪 Cookies:', response.headers['set-cookie']);
+    console.log('Conexión exitosa!');
+    console.log('Status:', response.status);
+    console.log('HTML length:', response.data.length);
+    console.log('Cookies:', response.headers['set-cookie']);
 
   } catch (error) {
     if (axios.isAxiosError(error)) {
       const axiosError = error as AxiosError;
-      console.error('❌ Error de Axios:');
-      console.error('   Status:', axiosError.response?.status);
-      console.error('   Mensaje:', axiosError.message);
+      console.error('Error de Axios:');
+      console.error('Status:', axiosError.response?.status);
+      console.error('Mensaje:', axiosError.message);
       if (axiosError.response?.status === 403) {
         console.error('   -> Revisa que tu VPN a Peru este activa');
       }
     } else if (error instanceof Error) {
-      console.error('❌ Error:', error.message);
+      console.error('Error:', error.message);
     } else {
-      console.error('❌ Error desconocido:', error);
+      console.error('Error desconocido:', error);
     }
   }
 }
