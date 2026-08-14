@@ -32,8 +32,7 @@ export class PdfDownloader {
     const filename = `${this.sanitizeFilename(doc.id)}_${this.sanitizeFilename(doc.title)}.pdf`;
     const filePath = path.join(this.outputDir, filename);
 
-    // Sanity check: si el servidor devolvió HTML/XML en vez de un PDF (ej. sesión
-    // vencida o ViewState inválido), lo detectamos por la firma %PDF- al inicio.
+    // Sanity check.
     const looksLikePdf = data.slice(0, 5).toString('ascii') === '%PDF-';
     if (!looksLikePdf) {
       const preview = data.slice(0, 200).toString('utf-8');
@@ -47,10 +46,8 @@ export class PdfDownloader {
 
   /**
    * Descarga un documento. Soporta dos mecanismos:
-   * 1. pdfUrl directa (GET simple) — si el sitio expone un link real al PDF.
-   * 2. downloadAction (POST postback JSF, caso OEFA) — requiere la sesión JSF
-   *    vigente (con el ViewState de la página donde está ese link) y la URL
-   *    del formulario al que hay que volver a postear.
+   *  pdfUrl directa (GET simple) — si el sitio expone un link real al PDF.
+   *  downloadAction (POST postback JSF, caso OEFA) — requiere la sesión JSF.
    */
   async downloadOne(doc: Document, session?: JsfSession, postUrl?: string): Promise<DownloadResult> {
     try {
@@ -88,12 +85,7 @@ export class PdfDownloader {
     }
   }
 
-  /**
-   * Descarga en serie (no en paralelo) con una pausa entre cada PDF, tanto
-   * para no saturar el servidor como para reducir la probabilidad de 429.
-   * IMPORTANTE: session/postUrl deben corresponder a la página donde esos
-   * documentos fueron listados (el ViewState de esa página, no uno más nuevo).
-   */
+  // Descarga en serie con una pausa entre cada PDF para evitar la saturación al server.
   async downloadAll(
     docs: Document[],
     delayMs: number,
