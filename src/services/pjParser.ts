@@ -2,16 +2,7 @@ import type { Cheerio, CheerioAPI } from 'cheerio';
 import logger from '../utils/logger';
 import { Document } from '../types';
 
-/**
- * Extracción de los resultados del Poder Judicial (RichFaces): cada resultado
- * es un <div class="rf-p" id*=":repeat:"> con un header (tipo de recurso +
- * nro de expediente) y un cuerpo con campos rotulados (Pretensión/Delito,
- * Tipo Resolución, Fecha Resolución, Sala Suprema, Norma de Derecho Interno,
- * Sumilla, Palabras Clave). El PDF es un link directo a un servlet.
- *
- * Es una función pura (sin red ni estado) a propósito, para poder validarla
- * contra un fixture HTML guardado sin necesidad de VPN (ver test:pj:offline).
- */
+// Extracción de los resultados del Poder Judicial.
 export function extractPjDocuments($: CheerioAPI, baseUrl: string): {
   documents: Document[];
   rowCount: number;
@@ -54,7 +45,7 @@ export function extractPjDocuments($: CheerioAPI, baseUrl: string): {
   return { documents, rowCount: rows.length };
 }
 
-/** Busca un div.txtbold cuyo texto empiece con `label` y devuelve el texto de su siguiente hermano. */
+// Busca un div.txtbold cuyo texto empiece con label y devuelve el texto del siguiente.
 function getLabeledValue($: CheerioAPI, container: Cheerio<any>, label: string): string {
   let value = '';
   container.find('.txtbold').each((_: number, el: any) => {
