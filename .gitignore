@@ -1,0 +1,19 @@
+# Dependencias
+node_modules/
+
+# Compilación
+dist/
+
+# Salida del scraper
+data/output/
+data/logs/
+data/debug/
+data/pdfs/
+
+# Fixture: para el test con html
+Prueba_Jurisprudencia_Nacional_Sistematizada_files/
+
+# Sistema
+.DS_Store
+Thumbs.db
+*.log
